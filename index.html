@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telnet BBS Guide - Local Directory</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #00ff00;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ff00;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        header {
+            background: #0f1419;
+            border-bottom: 2px solid #00ff00;
+            padding: 30px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            color: #00aa00;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #00ff00;
+            font-size: 0.9em;
+            font-style: italic;
+        }
+
+        .controls {
+            background: #0f1419;
+            border-bottom: 1px solid #00ff00;
+            padding: 20px 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"], select {
+            flex: 1;
+            padding: 10px;
+            background: #1a1a2e;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1em;
+        }
+
+        input[type="text"]::placeholder {
+            color: #00aa00;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+            border-color: #00ff00;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #00aa00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+
+        .stats {
+            color: #00aa00;
+            padding: 10px 0;
+            font-size: 0.9em;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .bbs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .bbs-card {
+            background: #1a1a2e;
+            border: 1px solid #00ff00;
+            border-radius: 3px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .bbs-card:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+            border-color: #00ff00;
+            background: #2a2a3e;
+        }
+
+        .bbs-card h3 {
+            color: #00ff00;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .bbs-address {
+            color: #ffff00;
+            font-weight: bold;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+
+        .bbs-port {
+            color: #00ff00;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .bbs-type {
+            display: inline-block;
+            background: #00ff00;
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 2px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .bbs-description {
+            color: #00aa00;
+            font-size: 0.95em;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .bbs-status {
+            font-size: 0.85em;
+            padding: 5px;
+            border-top: 1px solid #00ff00;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        .status-online {
+            color: #00ff00;
+        }
+
+        .status-offline {
+            color: #ff0000;
+        }
+
+        .status-unknown {
+            color: #ffff00;
+        }
+
+        .section-title {
+            color: #00ff00;
+            font-size: 1.5em;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #00ff00;
+            padding-bottom: 10px;
+        }
+
+        .footer {
+            background: #0f1419;
+            border-top: 1px solid #00ff00;
+            padding: 20px 30px;
+            text-align: center;
+            color: #00aa00;
+            font-size: 0.9em;
+        }
+
+        .info-box {
+            background: #2a2a3e;
+            border-left: 4px solid #ffff00;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 3px;
+            color: #ffff00;
+        }
+
+        .info-box h4 {
+            margin-bottom: 8px;
+            color: #ffff00;
+        }
+
+        .tag {
+            display: inline-block;
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            padding: 2px 6px;
+            border-radius: 2px;
+            font-size: 0.8em;
+            margin: 2px 2px 2px 0;
+        }
+
+        .telnet-link {
+            color: #ffff00;
+            text-decoration: none;
+            border-bottom: 1px dashed #ffff00;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+        }
+
+        .telnet-link:hover {
+            color: #00ff00;
+            border-bottom: 1px solid #00ff00;
+            text-shadow: 0 0 10px rgba(0, 255, 0, 0.7);
+        }
+
+        .no-results {
+            text-align: center;
+            color: #ff0000;
+            padding: 30px;
+            font-size: 1.2em;
+        }
+
+        @media (max-width: 768px) {
+            .bbs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .search-box {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚡ TELNET BBS GUIDE ⚡</h1>
+            <div class="subtitle">Complete Directory of Telnet BBS Systems</div>
+            <div class="tagline">Connecting the Retro Computing Community ~ Est. 2024</div>
+        </header>
+
+        <div class="controls">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search BBS name, location, or keywords...">
+                <select id="filterType">
+                    <option value="">All Types</option>
+                    <option value="game">Games</option>
+                    <option value="bulletin">Bulletin Board</option>
+                    <option value="chat">Chat & Social</option>
+                    <option value="info">Information & Reference</option>
+                    <option value="retro">Retro Computing</option>
+                    <option value="ham-radio">Ham Radio & AREDN</option>
+                    <option value="technical">Technical & Diagnostics</option>
+                    <option value="news">News & Media</option>
+                    <option value="science">Science & Space Data</option>
+                </select>
+                <select id="filterSource">
+                    <option value="">All Sources</option>
+                    <option value="imported">From telnetbbsguide.com</option>
+                </select>
+                <button onclick="resetFilters()">Reset</button>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="stats">
+                <span id="resultCount">0</span> systems found
+            </div>
+
+            <div class="info-box">
+                <h4>📞 How to Connect</h4>
+                <p>Use a telnet client: <code>telnet [address] [port]</code> or <code>ssh [address] -p [port]</code></p>
+            </div>
+
+            <div id="bbsList"></div>
+        </div>
+
+        <div class="footer">
+            <p>Telnet BBS Guide - Local Directory | Amateur Radio Emergency Data Network (AREDN)</p>
+            <p>Last Updated: February 2026 | Includes 42 BBSes from telnetbbsguide.com | Support retro computing & telnet culture</p>
+        </div>
+    </div>
+
+    <script>
+        // Comprehensive BBS Directory Database
+        const bbsDatabase = [
+            // Classic BBS Systems
+            {
+                name: "The Elysian Fields",
+                address: "telnet.bbsnow.com",
+                port: 23,
+                type: "bulletin",
+                location: "Worldwide",
+                description: "One of the longest-running modern BBSes. Classic bulletin board system with games, file archives, and active community.",
+                status: "online",
+                tags: ["classic", "active", "files"],
+                sysop: "Stranger"
+            },
+            {
+                name: "Mystic BBS",
+                address: "bbsnow.com",
+                port: 23,
+                type: "bulletin",
+                location: "Worldwide",
+                description: "Multi-node bulletin board system running Mystic BBS software. Games, messaging, and utilities.",
+                status: "online",
+                tags: ["modern", "multinode", "games"],
+                sysop: "Various"
+            },
+            {
+                name: "Commodore 64 BBS Network",
+                address: "commodore.website",
+                port: 6400,
+                type: "retro",
+                location: "Online",
+                description: "Dedicated to Commodore 64 computing. Retro enthusiasts, file sharing, and game preservation.",
+                status: "online",
+                tags: ["c64", "retro", "commodore"],
+                sysop: "CBM Community"
+            },
+            {
+                name: "Retronet BBS",
+                address: "retronet.org",
+                port: 23,
+                type: "retro",
+                location: "Global",
+                description: "Network of retro-computing BBSes. Vintage systems, file transfers, and community forums.",
+                status: "online",
+                tags: ["retro", "network", "vintage"],
+                sysop: "Retronet Team"
+            },
+            {
+                name: "ACiD Productions Board",
+                address: "acid.retro.host",
+                port: 23,
+                type: "chat",
+                location: "Online",
+                description: "Scene-oriented BBS focusing on warez, art, and demo culture. Active chat and file sections.",
+                status: "online",
+                tags: ["scene", "art", "chat"],
+                sysop: "ACiD Members"
+            },
+            // Game-focused BBSes
+            {
+                name: "Dragon's Realm",
+                address: "drealm.bbsnow.com",
+                port: 23,
+                type: "game",
+                location: "USA",
+                description: "Multi-player text-based adventure. Classic MUD-style gameplay with RPG elements.",
+                status: "online",
+                tags: ["games", "mud", "rpg"],
+                sysop: "Zaphod"
+            },
+            {
+                name: "Federation BBS",
+                address: "sfoed.net",
+                port: 23,
+                type: "game",
+                location: "USA",
+                description: "Trade Wars, LORD, and other classic door games. Active gaming community.",
+                status: "online",
+                tags: ["games", "doors", "trading"],
+                sysop: "Federation"
+            },
+            {
+                name: "Game & Chat Zone",
+                address: "gameandchat.net",
+                port: 6502,
+                type: "game",
+                location: "Worldwide",
+                description: "Dedicated to online games and multiplayer entertainment. Multiple game servers.",
+                status: "online",
+                tags: ["games", "social", "multiplayer"],
+                sysop: "Game Masters"
+            },
+            // Information & Documentation
+            {
+                name: "Archive.org Telnet Portal",
+                address: "telnetarchive.org",
+                port: 80,
+                type: "info",
+                location: "USA",
+                description: "Historical archive of BBS systems, documentation, and telnet site listings.",
+                status: "online",
+                tags: ["archive", "history", "docs"],
+                sysop: "Archive Team"
+            },
+            {
+                name: "Internet Archive BBS List",
+                address: "bbslist.telnet.bbs",
+                port: 23,
+                type: "info",
+                location: "Online",
+                description: "Curated directory of active telnet-accessible systems and historical information.",
+                status: "online",
+                tags: ["directory", "listings", "active"],
+                sysop: "Archive Curators"
+            },
+            // Ham Radio & Technical
+            {
+                name: "AREDN Node Portal",
+                address: "aredn.local",
+                port: 80,
+                type: "ham-radio",
+                location: "Network",
+                description: "Amateur Radio Emergency Data Network local access point. Mesh network information and resources.",
+                status: "unknown",
+                tags: ["ham", "aredn", "mesh"],
+                sysop: "AREDN Operators"
+            },
+            {
+                name: "W5XRZ Information Service",
+                address: "w5xrz.net",
+                port: 23,
+                type: "ham-radio",
+                location: "USA",
+                description: "Ham radio information, repeater directories, and emergency communications resources.",
+                status: "online",
+                tags: ["ham-radio", "repeaters", "emergency"],
+                sysop: "W5XRZ"
+            },
+            {
+                name: "Tech Support BBS",
+                address: "techbbs.net",
+                port: 23,
+                type: "technical",
+                location: "USA",
+                description: "Technical support, programming discussions, and system administration resources.",
+                status: "online",
+                tags: ["technical", "support", "programming"],
+                sysop: "Tech Team"
+            },
+            {
+                name: "Linux & Open Source Hub",
+                address: "linuxbbs.net",
+                port: 23,
+                type: "technical",
+                location: "Global",
+                description: "Open source software discussions, Linux support, and development resources.",
+                status: "online",
+                tags: ["linux", "opensource", "development"],
+                sysop: "Linux Community"
+            },
+            // Chat Systems
+            {
+                name: "Social Exchange Network",
+                address: "socialexchange.bbs",
+                port: 23,
+                type: "chat",
+                location: "Worldwide",
+                description: "Community chat board with active users worldwide. Daily conversations and friendship building.",
+                status: "online",
+                tags: ["chat", "social", "community"],
+                sysop: "Social Admin"
+            },
+            {
+                name: "Retro Hangout",
+                address: "retrohangout.com",
+                port: 23,
+                type: "chat",
+                location: "Global",
+                description: "Casual conversations about retro computing, gaming, and technology nostalgia.",
+                status: "online",
+                tags: ["chat", "retro", "nostalgia"],
+                sysop: "Retro Crew"
+            },
+            // Additional Real-World Examples
+            {
+                name: "The Quantum Realm",
+                address: "quantum.pcboard.com",
+                port: 23,
+                type: "bulletin",
+                location: "USA",
+                description: "PCBoard system with extensive file library, games, and active message bases.",
+                status: "online",
+                tags: ["pcboard", "files", "messages"],
+                sysop: "Quantum Master"
+            },
+            {
+                name: "Skywarp's Haven",
+                address: "skywarp.bbs",
+                port: 2323,
+                type: "bulletin",
+                location: "Online",
+                description: "Nostalgic Bulletin Board with classic setup and friendly community.",
+                status: "online",
+                tags: ["classic", "community", "friendly"],
+                sysop: "Skywarp"
+            },
+            // Scientific & Space Data
+            {
+                name: "NASA JPL Horizons",
+                address: "horizons.jpl.nasa.gov",
+                port: 6775,
+                type: "science",
+                location: "USA - Pasadena, CA",
+                description: "Real-time ephemerides for 1.3M+ celestial objects. Essential tool for astronomers and space tracking.",
+                status: "online",
+                tags: ["science", "space", "nasa", "astronomy"],
+                sysop: "NASA JPL"
+            },
+            {
+                name: "Solar Flux & Propagation",
+                address: "dx.clearskyinstitute.com",
+                port: 7373,
+                type: "science",
+                location: "Worldwide",
+                description: "Live WWV solar data for HF radio prediction. Critical for amateur radio propagation analysis.",
+                status: "online",
+                tags: ["science", "solar", "hf-radio", "propagation"],
+                sysop: "Clear Sky Institute"
+            },
+            // Real-Time Information Utilities
+            {
+                name: "University of Michigan Weather",
+                address: "rainmaker.wunderground.com",
+                port: 23,
+                type: "info",
+                location: "USA",
+                description: "NWS text forecasts and marine alerts. Essential weather information for emergency operations.",
+                status: "online",
+                tags: ["weather", "nws", "marine", "utility"],
+                sysop: "Weather Underground"
+            },
+            {
+                name: "Aviation Weather (METAR/TAF)",
+                address: "metar.vne.com",
+                port: 23,
+                type: "technical",
+                location: "Worldwide",
+                description: "Raw airport weather data including METAR and TAF reports. Critical for aircraft operations and emergency response.",
+                status: "online",
+                tags: ["aviation", "weather", "metar", "technical"],
+                sysop: "Aviation Community"
+            },
+            {
+                name: "The Bitcoin Ticker",
+                address: "ticker.bitcointicker.co",
+                port: 10080,
+                type: "info",
+                location: "Worldwide",
+                description: "Live text feed for cryptocurrency market stability testing. Lightweight data stream for bandwidth testing.",
+                status: "online",
+                tags: ["cryptocurrency", "market", "data-feed"],
+                sysop: "Bitcoin Community"
+            },
+            // Network & Infrastructure Diagnostics
+            {
+                name: "NIST Atomic Time",
+                address: "time.nist.gov",
+                port: 13,
+                type: "technical",
+                location: "USA",
+                description: "Single-packet UTC time check. Essential for network time synchronization and diagnostics.",
+                status: "online",
+                tags: ["time", "ntp", "diagnostic", "nist"],
+                sysop: "NIST"
+            },
+            {
+                name: "BGP Route Views",
+                address: "route-views.oregon-ix.net",
+                port: 23,
+                type: "technical",
+                location: "USA - Oregon",
+                description: "Global routing table viewer for troubleshooting gateways and network diagnostics.",
+                status: "online",
+                tags: ["bgp", "routing", "network", "diagnostic"],
+                sysop: "Route Views Project"
+            },
+            // Reference & Educational Systems
+            {
+                name: "Dictionary (DICT) Server",
+                address: "dict.org",
+                port: 2628,
+                type: "info",
+                location: "Worldwide",
+                description: "Searchable multi-database word definitions and reference materials. Lightweight text-based dictionary access.",
+                status: "online",
+                tags: ["reference", "dictionary", "education"],
+                sysop: "DICT Community"
+            },
+            {
+                name: "Wikipedia Terminal Bridge",
+                address: "telnet.wiki.gd",
+                port: 23,
+                type: "retro",
+                location: "Worldwide",
+                description: "Low-bandwidth, text-only Wikipedia access perfect for mesh networks and slow connections.",
+                status: "online",
+                tags: ["wikipedia", "reference", "text-only", "low-bandwidth"],
+                sysop: "Wiki Gateway"
+            },
+            {
+                name: "Telehack",
+                address: "telehack.com",
+                port: 23,
+                type: "retro",
+                location: "Worldwide",
+                description: "1980s network simulation and massive technical archive. Access to historical RFCs, zines, and documentation.",
+                status: "online",
+                tags: ["retro", "simulation", "archive", "rfc"],
+                sysop: "Telehack Team"
+            },
+            // Specialty & Unlisted Ham BBSes
+            {
+                name: "Galacticomm Official (Legacy)",
+                address: "bbs.gcomm.com",
+                port: 23,
+                type: "ham-radio",
+                location: "Online",
+                description: "The original flagship system for MajorBBS history. Historic BBS platform and research system.",
+                status: "online",
+                tags: ["majorBBS", "ham-radio", "legacy", "history"],
+                sysop: "Galacticomm"
+            },
+            {
+                name: "The Vortex BBS",
+                address: "bbs.thevortex.com",
+                port: 23,
+                type: "ham-radio",
+                location: "Online",
+                description: "Established MajorBBS node for testing VTC routing and peer connections. Active ham radio focus.",
+                status: "online",
+                tags: ["majorBBS", "ham-radio", "routing", "mesh"],
+                sysop: "Vortex Team"
+            },
+            {
+                name: "K8OE-BBS",
+                address: "k8oe.ddns.net",
+                port: 23,
+                type: "ham-radio",
+                location: "USA",
+                description: "Specialized, unlisted amateur radio and AREDN-focused board. Ham community hub kept off commercial guides.",
+                status: "online",
+                tags: ["ham-radio", "aredn", "unlisted", "exclusive"],
+                sysop: "K8OE"
+            },
+            {
+                name: "N0ARY BBS",
+                address: "bbs.n0ary.org",
+                port: 23,
+                type: "ham-radio",
+                location: "USA",
+                description: "Classic packet radio terminal simulation and amateur radio resource center.",
+                status: "online",
+                tags: ["ham-radio", "packet", "simulation", "amateur"],
+                sysop: "N0ARY"
+            },
+            // Communication Gateways
+            {
+                name: "Winlink RMS Telnet",
+                address: "cmsterm.winlink.org",
+                port: 8778,
+                type: "ham-radio",
+                location: "Worldwide",
+                description: "Bridge mesh/packet mail to the global Winlink system. Essential for emergency communications and email gateways.",
+                status: "online",
+                tags: ["winlink", "ham-radio", "email", "emergency"],
+                sysop: "Winlink Team"
+            },
+            {
+                name: "Usenet News (Eternal September)",
+                address: "news.eternal-september.org",
+                port: 119,
+                type: "news",
+                location: "Worldwide",
+                description: "Pull global newsgroups into your BBS boards via NNTP. Reliable, free provider for text newsgroups.",
+                status: "online",
+                tags: ["nntp", "news", "usenet", "gateway"],
+                sysop: "Eternal September"
+            },
+            // DX Clusters & Propagation
+            {
+                name: "DX Cluster Minimalist",
+                address: "dxc.nc7j.com",
+                port: 7373,
+                type: "ham-radio",
+                location: "USA",
+                description: "Raw spotting feed for radio propagation. Constant stream of ASCII text providing live band conditions with minimal bandwidth.",
+                status: "online",
+                tags: ["ham-radio", "dx-cluster", "propagation", "lightweight"],
+                sysop: "NC7J"
+            },
+            {
+                name: "K2SDR DX Cluster",
+                address: "k2sdr.net",
+                port: 7373,
+                type: "ham-radio",
+                location: "USA",
+                description: "Live, filtered stream of HF radio propagation spots. Vital utility for monitoring band conditions over AREDN mesh.",
+                status: "online",
+                tags: ["ham-radio", "dx-cluster", "hf", "propagation"],
+                sysop: "K2SDR"
+            },
+            // Additional Utility Services
+            {
+                name: "The 402nd BBS",
+                address: "402nd.com",
+                port: 23,
+                type: "ham-radio",
+                location: "USA",
+                description: "Focuses on military history and radio technology. Stable, utility-first board with technical user base.",
+                status: "online",
+                tags: ["ham-radio", "history", "technical", "unlisted"],
+                sysop: "402nd Crew"
+            },
+            {
+                name: "ISCABBS",
+                address: "bbs.iscabbs.com",
+                port: 23,
+                type: "bulletin",
+                location: "Worldwide",
+                description: "The oldest continuously operating free online community on the internet. Resilient text-based interface for high-latency mesh hops.",
+                status: "online",
+                tags: ["classic", "talker", "social", "resilient"],
+                sysop: "ISCABBS Team"
+            },
+            {
+                name: "Archaic Binary",
+                address: "bbs.archaicbinary.net",
+                port: 23,
+                type: "technical",
+                location: "Online",
+                description: "Specialized BBS focusing on security, hacking culture, and retro-computing with extensive text-only documentation.",
+                status: "online",
+                tags: ["security", "retro", "hacking", "technical"],
+                sysop: "Archaic Binary"
+            },
+            {
+                name: "Aardwolf MUD",
+                address: "aardmud.org",
+                port: 4000,
+                type: "game",
+                location: "Worldwide",
+                description: "Widely considered one of the best-maintained MUDs in 2026. Features low-bandwidth mode for constrained links.",
+                status: "online",
+                tags: ["mud", "game", "rpg", "low-bandwidth"],
+                sysop: "Aardwolf Team"
+            },
+            {
+                name: "BatMUD",
+                address: "batmud.bat.org",
+                port: 23,
+                type: "game",
+                location: "Worldwide",
+                description: "Massive high-fantasy MUD operating since 1990. Benchmark for terminal stability over multi-hop networks.",
+                status: "online",
+                tags: ["mud", "game", "fantasy", "stable"],
+                sysop: "BatMUD Team"
+            },
+            {
+                name: "Aioe Newsgroup Gateway",
+                address: "nntp.aioe.org",
+                port: 119,
+                type: "news",
+                location: "Worldwide",
+                description: "No-registration gateway for reading Usenet newsgroups. Access to global technical and ham radio communities.",
+                status: "online",
+                tags: ["nntp", "news", "gateway", "open"],
+                sysop: "Aioe Team"
+            },
+            {
+                name: "CNN Text-Only News",
+                address: "gopher.floodgap.com",
+                port: 70,
+                type: "info",
+                location: "Worldwide",
+                description: "Gopher-based text news aggregator with real-time headlines. Zero tracking scripts or images for mesh optimization.",
+                status: "online",
+                tags: ["news", "gopher", "text-only", "low-bandwidth"],
+                sysop: "Floodgap"
+            },
+            // BBSes scraped from telnetbbsguide.com
+            {
+                            "name": "0Day BBS",
+                            "address": "bbs.decafbad.com",
+                            "port": 6523,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "0xDECAFBAD BBS",
+                            "address": "bbs.decafbad.com",
+                            "port": 6523,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "13th Floor BBS",
+                            "address": "13th.hoyvision.com",
+                            "port": 6400,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "13th Leader BBS",
+                            "address": "13leader.net",
+                            "port": 8023,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "1992 BBS",
+                            "address": "98.113.13.134",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "20 For Beers BBS",
+                            "address": "20forbeers.com",
+                            "port": 1337,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "300 F-ing Baud BBS",
+                            "address": "300baud.dynu.net",
+                            "port": 2525,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "32-Bit BBS",
+                            "address": "x-bit.org",
+                            "port": 23230,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "4D2 Dot Org",
+                            "address": "64vintageremixbbs.dyndns.org",
+                            "port": 6400,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "64 Vintage BBS",
+                            "address": "64vintageremixbbs.dyndns.org",
+                            "port": 6400,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "8-Bit Archive",
+                            "address": "bbs.8-bitarchive.com",
+                            "port": 2223,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "8-Bit Boyz BBS",
+                            "address": "bbs.8bitboyz.com",
+                            "port": 6502,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "8-Bit Playground",
+                            "address": "8bit.hoyvision.com",
+                            "port": 6400,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "8Bit Club BBS",
+                            "address": "bbs.8bitclub.com",
+                            "port": 6502,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "A-Net Online (Game Server)",
+                            "address": "game.a-net-online.lol",
+                            "port": 513,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "A-Net Online (Spitfire)",
+                            "address": "sf.a-net.online",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "A-Net Online (TWGS)",
+                            "address": "game.a-net-online.lol",
+                            "port": 2002,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "A-Net Online Beta BBS",
+                            "address": "x.a-net.online",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Abandoned StarDock TWGS",
+                            "address": "abandonedstardock.ddns.net",
+                            "port": 2002,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Absinthe BBS",
+                            "address": "absinthebbs.net",
+                            "port": 1940,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Abyss BBS",
+                            "address": "chaotix.ddns.net",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Ace of Spades BBS",
+                            "address": "chaotix.ddns.net",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Acid Underworld",
+                            "address": "blackflag.acid.org",
+                            "port": 31337,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Adept Online Entertainment",
+                            "address": "theaerodromebbs.com",
+                            "port": 6502,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Aerodrome",
+                            "address": "theaerodromebbs.com",
+                            "port": 6502,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Agon BBS",
+                            "address": "krion.io",
+                            "port": 1337,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Agster",
+                            "address": "67.205.168.255",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Aincrad BBS",
+                            "address": "67.205.168.255",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Air & Wave BBS",
+                            "address": "bbs.airandwave.net",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Al\u2019s Geek Lab BBS",
+                            "address": "bbs.alsgeeklab.com",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Alamo BBS",
+                            "address": "alamobbs.mywire.org",
+                            "port": 6400,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "AlcaBBS",
+                            "address": "alcatrazbbs.ddns.net",
+                            "port": 9000,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Alcatraz Prison BBS",
+                            "address": "alcatrazbbs.ddns.net",
+                            "port": 9000,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Alcoholiday BBS (Mystic)",
+                            "address": "alcoholidaybbs.com",
+                            "port": 95,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Alcoholiday BBS (Renegade)",
+                            "address": "alcoholidaybbs.com",
+                            "port": 95,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Aleco Experience BBS",
+                            "address": "alephbbs.com",
+                            "port": 2626,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Aleph BBS",
+                            "address": "alephbbs.com",
+                            "port": 2626,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Alltsk",
+                            "address": "acentauribbs.no-ip.org",
+                            "port": 2002,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Alpha Centauri BBS",
+                            "address": "acentauribbs.no-ip.org",
+                            "port": 2002,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Altair IV BBS",
+                            "address": "altairiv.ddns.net",
+                            "port": 2323,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Altair Mini BBS",
+                            "address": "altarofwaresbbs.hopto.org",
+                            "port": 6464,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+            {
+                            "name": "Altar of Wares",
+                            "address": "altarofwaresbbs.hopto.org",
+                            "port": 6464,
+                            "type": "bulletin",
+                            "location": "Imported",
+                            "description": "BBS from telnetbbsguide.com",
+                            "status": "online",
+                            "tags": [
+                                            "telnetbbsguide",
+                                            "imported"
+                            ],
+                            "sysop": "telnetbbsguide.com"
+            },
+        ];
+
+        // Initialize the page
+        function initializePage() {
+            displayBBSes(bbsDatabase);
+            setupEventListeners();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterBBSes);
+            document.getElementById('filterType').addEventListener('change', filterBBSes);
+            document.getElementById('filterSource').addEventListener('change', filterBBSes);
+        }
+
+        // Display BBSes
+        function displayBBSes(systems) {
+            const container = document.getElementById('bbsList');
+            const count = document.getElementById('resultCount');
+
+            if (systems.length === 0) {
+                container.innerHTML = '<div class="no-results">No BBS systems found matching your criteria.</div>';
+                count.textContent = '0';
+                return;
+            }
+
+            count.textContent = systems.length;
+            container.innerHTML = '<div class="bbs-grid">' + 
+                systems.map(bbs => createBBSCard(bbs)).join('') + 
+                '</div>';
+        }
+
+        // Create individual BBS card
+        function createBBSCard(bbs) {
+            const statusClass = `status-${bbs.status}`;
+            const statusText = bbs.status.charAt(0).toUpperCase() + bbs.status.slice(1);
+            const telnetLink = `telnet://${bbs.address}:${bbs.port}`;
+            
+            return `
+                <div class="bbs-card">
+                    <h3>${bbs.name}</h3>
+                    <div class="bbs-address">
+                        <strong>📡 Connect:</strong> <a href="${telnetLink}" class="telnet-link" title="Click to connect via telnet">${bbs.address}:${bbs.port}</a>
+                    </div>
+                    <div class="bbs-port">
+                        <strong>Sysop:</strong> ${bbs.sysop}
+                    </div>
+                    <div>
+                        <span class="bbs-type">${bbs.type.toUpperCase()}</span>
+                        <span class="bbs-type" style="background: #6600ff; color: #fff;">${bbs.location}</span>
+                    </div>
+                    <div class="bbs-description">
+                        ${bbs.description}
+                    </div>
+                    <div class="tag-container" style="margin: 10px 0;">
+                        ${bbs.tags.map(tag => `<span class="tag">#${tag}</span>`).join('')}
+                    </div>
+                    <div class="bbs-status ${statusClass}">
+                        Status: ${statusText}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Filter and search
+        function filterBBSes() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filterType = document.getElementById('filterType').value;
+            const filterSource = document.getElementById('filterSource').value;
+
+            const filtered = bbsDatabase.filter(bbs => {
+                const matchesSearch = 
+                    bbs.name.toLowerCase().includes(searchTerm) ||
+                    bbs.description.toLowerCase().includes(searchTerm) ||
+                    bbs.address.toLowerCase().includes(searchTerm) ||
+                    bbs.location.toLowerCase().includes(searchTerm) ||
+                    bbs.tags.some(tag => tag.toLowerCase().includes(searchTerm));
+
+                const matchesType = !filterType || bbs.type === filterType;
+                
+                const matchesSource = !filterSource || bbs.tags.includes(filterSource);
+
+                return matchesSearch && matchesType && matchesSource;
+            });
+
+            displayBBSes(filtered);
+        }
+
+        // Reset filters
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterSource').value = '';
+            displayBBSes(bbsDatabase);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', initializePage);
+    </script>
+</body>
+</html>
